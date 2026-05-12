@@ -55,9 +55,11 @@ service cloud.firestore {
     }
 
     function isValidTask(data) {
-      return data.keys().hasAll(['title', 'priority', 'completed', 'ownerId'])
+      return data.keys().hasAll(['title', 'priority', 'status', 'order', 'completed', 'ownerId'])
           && data.title is string && data.title.size() <= 512
           && data.priority in ['low', 'medium', 'high']
+          && data.status in ['todo', 'in_progress', 'done']
+          && data.order is int
           && data.completed is bool
           && isValidId(data.ownerId);
     }

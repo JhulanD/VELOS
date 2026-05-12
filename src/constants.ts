@@ -118,7 +118,7 @@ export const MOCK_JOBS: Job[] = [
 ];
 
 export const MOCK_TASKS: Task[] = [
-  { id: 't1', title: 'Call Alex Rivera for brief sync', dueDate: '2024-05-12T14:30:00Z', priority: 'high', completed: false, type: 'follow-up', candidateId: 'c1' },
-  { id: 't2', title: 'Review feedback for Jessica Chen', dueDate: '2024-05-12T16:00:00Z', priority: 'medium', completed: false, type: 'screening', candidateId: 'c2' },
-  { id: 't3', title: 'Schedule interview for Staff Backend', dueDate: '2024-05-13T10:00:00Z', priority: 'medium', completed: false, type: 'interview' }
+  { id: 't1', title: 'Call Alex Rivera for brief sync', dueDate: '2024-05-12T14:30:00Z', priority: 'high', status: 'todo', order: 0, completed: false, type: 'follow-up', candidateId: 'c1' },
+  { id: 't2', title: 'Review feedback for Jessica Chen', dueDate: '2024-05-12T16:00:00Z', priority: 'medium', status: 'in_progress', order: 0, completed: false, type: 'screening', candidateId: 'c2' },
+  { id: 't3', title: 'Schedule interview for Staff Backend', dueDate: '2024-05-13T10:00:00Z', priority: 'medium', status: 'todo', order: 1, completed: false, type: 'interview' }
 ];

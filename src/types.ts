@@ -50,6 +50,8 @@ export interface Task {
   title: string;
   dueDate: string;
   priority: 'low' | 'medium' | 'high';
+  status: 'todo' | 'in_progress' | 'done';
+  order: number;
   completed: boolean;
   type: 'follow-up' | 'interview' | 'screening' | 'other';
   candidateId?: string;

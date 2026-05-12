@@ -56,12 +56,14 @@
         "title": { "type": "string" },
         "type": { "type": "string" },
         "priority": { "type": "string", "enum": ["low", "medium", "high"] },
+        "status": { "type": "string", "enum": ["todo", "in_progress", "done"] },
+        "order": { "type": "integer" },
         "dueDate": { "type": "string", "format": "date-time" },
         "completed": { "type": "boolean" },
         "candidateId": { "type": "string" },
         "ownerId": { "type": "string" }
       },
-      "required": ["title", "priority", "completed"]
+      "required": ["title", "priority", "status", "order", "completed"]
     }
   },
   "firestore": {

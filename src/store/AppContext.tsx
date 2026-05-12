@@ -70,6 +70,7 @@ interface AppContextType {
   addTask: (task: Omit<Task, 'id' | 'ownerId'>) => Promise<void>;
   toggleTask: (id: string, completed: boolean) => Promise<void>;
   updateCandidateSummary: (id: string, summary: string) => Promise<void>;
+  updateTaskStatus: (id: string, status: Task['status'], order?: number) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -123,13 +124,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
           setJobs(list);
         }, (err) => handleFirestoreError(err, OperationType.LIST, 'jobs'));
 
-        const unsubTasks = onSnapshot(query(collection(db, 'tasks'), where('ownerId', '==', firebaseUser.uid)), (snapshot) => {
-          const list = snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Task));
-          if (list.length === 0 && firebaseUser) {
-            seedInitialTasks(firebaseUser.uid);
-          }
-           setTasks(list);
-        }, (err) => handleFirestoreError(err, OperationType.LIST, 'tasks'));
+    const unsubTasks = onSnapshot(query(collection(db, 'tasks'), where('ownerId', '==', firebaseUser.uid)), (snapshot) => {
+      const list = snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Task));
+      if (list.length === 0 && firebaseUser) {
+        seedInitialTasks(firebaseUser.uid);
+      }
+      // Sort tasks by order
+      list.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+      setTasks(list);
+    }, (err) => handleFirestoreError(err, OperationType.LIST, 'tasks'));
 
         setAuthReady(true);
         return () => {
@@ -175,7 +178,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     try {
       for (const t of MOCK_TASKS) {
         const { id, ...data } = t;
-        await setDoc(doc(db, 'tasks', id), { ...data, ownerId: uid });
+        await setDoc(doc(db, 'tasks', id), { 
+          ...data, 
+          ownerId: uid 
+        });
       }
     } catch (err) {
       console.error("Seeding error:", err);
@@ -232,7 +238,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const toggleTask = async (id: string, completed: boolean) => {
     const path = `tasks/${id}`;
     try {
-      await updateDoc(doc(db, 'tasks', id), { completed });
+      await updateDoc(doc(db, 'tasks', id), { 
+        completed,
+        status: completed ? 'done' : 'todo'
+      });
+    } catch (err) {
+      handleFirestoreError(err, OperationType.UPDATE, path);
+    }
+  };
+
+  const updateTaskStatus = async (id: string, status: Task['status'], order?: number) => {
+    const path = `tasks/${id}`;
+    try {
+      const updates: any = { 
+        status,
+        completed: status === 'done'
+      };
+      if (typeof order === 'number') {
+        updates.order = order;
+      }
+      await updateDoc(doc(db, 'tasks', id), updates);
     } catch (err) {
       handleFirestoreError(err, OperationType.UPDATE, path);
     }
@@ -250,7 +275,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       updateCandidateStatus,
       updateCandidateSummary,
       addTask,
-      toggleTask
+      toggleTask,
+      updateTaskStatus
     }}>
       {children}
     </AppContext.Provider>
