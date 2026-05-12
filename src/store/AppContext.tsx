@@ -191,8 +191,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const login = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Login failed:", err);
+      
+      if (err.code === 'auth/unauthorized-domain') {
+        alert(
+          `Domain Unauthorized: The current domain (${window.location.hostname}) is not whitelisted in your Firebase Console.\n\n` +
+          `To fix this:\n` +
+          `1. Go to Firebase Console > Authentication > Settings > Authorized domains\n` +
+          `2. Add "${window.location.hostname}" to the list.\n` +
+          `3. Wait a few minutes and try again.`
+        );
+      } else if (err.code === 'auth/popup-blocked') {
+        alert('Login Popup Blocked: Please allow popups for this site to sign in with Google.');
+      } else {
+        alert(`Login failed: ${err.message || 'Unknown error'}. Please check your connection and configuration.`);
+      }
     }
   };
 

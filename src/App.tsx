@@ -16,7 +16,7 @@ import { Analytics } from './views/Analytics';
 import { Tasks } from './views/Tasks';
 import { Login } from './views/Login';
 import { AppProvider, useApp } from './store/AppContext';
-import { Briefcase } from 'lucide-react';
+import { Briefcase, Bell } from 'lucide-react';
 
 // Simple placeholder views for now
 const ComingSoon = ({ title }: { title: string }) => (
@@ -97,19 +97,3 @@ export default function App() {
     </AppProvider>
   );
 }
-
-const Bell = ({ className }: { className?: string }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className={className}
-  >
-    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-  </svg>
-);
