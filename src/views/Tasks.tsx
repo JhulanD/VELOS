@@ -182,6 +182,7 @@ export function Tasks() {
                         className="flex-1 space-y-3"
                       >
                         {getTasksByStatus(column.id).map((task, index) => (
+                          /* @ts-expect-error key is required by React in map but not in DraggableProps */
                           <Draggable key={task.id} draggableId={task.id} index={index}>
                             {(provided, snapshot) => (
                               <div

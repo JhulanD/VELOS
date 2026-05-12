@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../store/AppContext';
+import { auth } from '../lib/firebase';
 import { motion } from 'motion/react';
 import { Briefcase, Zap, Shield, Target } from 'lucide-react';
 

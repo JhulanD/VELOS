@@ -22,7 +22,7 @@ import { Candidate } from '../types';
 import { generateCandidateSummary } from '../services/gemini';
 
 export function Candidates() {
-  const { candidates, updateCandidateSummary } = useApp();
+  const { candidates, updateCandidateSummary, updateCandidateStatus } = useApp();
   const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
