@@ -1,0 +1,85 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Recruiter profile in the platform",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string" },
+        "avatar": { "type": "string" },
+        "placementsThisMonth": { "type": "integer" }
+      },
+      "required": ["uid", "name", "email"]
+    },
+    "Candidate": {
+      "title": "Candidate",
+      "description": "A job applicant or prospective talent",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "company": { "type": "string" },
+        "status": { "type": "string", "enum": ["sourced", "screening", "interview", "offer_sent", "placed", "rejected"] },
+        "location": { "type": "string" },
+        "aiScore": { "type": "integer" },
+        "aiSummary": { "type": "string" },
+        "lastContacted": { "type": "string", "format": "date-time" },
+        "skills": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "array", "items": { "type": "string" } },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["name", "status"]
+    },
+    "Job": {
+      "title": "Job",
+      "description": "Recruitment position or vacancy",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "company": { "type": "string" },
+        "location": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "closed", "draft"] },
+        "pipelineCount": { "type": "integer" },
+        "description": { "type": "string" },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["title", "company", "status"]
+    },
+    "Task": {
+      "title": "Task",
+      "description": "A recruiter operation or to-do item",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "type": { "type": "string" },
+        "priority": { "type": "string", "enum": ["low", "medium", "high"] },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "completed": { "type": "boolean" },
+        "candidateId": { "type": "string" },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["title", "priority", "completed"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Recruiter profile data"
+    },
+    "candidates/{candidateId}": {
+      "schema": "Candidate",
+      "description": "Global talent pool"
+    },
+    "jobs/{jobId}": {
+      "schema": "Job",
+      "description": "Active recruitment roles"
+    },
+    "tasks/{taskId}": {
+      "schema": "Task",
+      "description": "To-do items for recruiters"
+    }
+  }
+}
