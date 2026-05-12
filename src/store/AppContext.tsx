@@ -18,6 +18,7 @@ import {
   where
 } from '../lib/firebase';
 import { updateDoc, addDoc, deleteDoc } from 'firebase/firestore';
+import { setPersistence, browserLocalPersistence } from 'firebase/auth';
 
 enum OperationType {
   CREATE = 'create',
@@ -83,6 +84,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
+    // Force local persistence for better iframe compatibility
+    setPersistence(auth, browserLocalPersistence).catch(err => console.error("Auth persistence error:", err));
+    
     testFirestoreConnection();
     
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
@@ -189,23 +193,30 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async () => {
+    console.log("Starting login flow for domain:", window.location.hostname);
     try {
       await signInWithPopup(auth, googleProvider);
     } catch (err: any) {
-      console.error("Login failed:", err);
+      console.error("Login Error Detailed:", {
+        code: err.code,
+        message: err.message,
+        domain: window.location.hostname,
+        config: auth.app.options
+      });
       
       if (err.code === 'auth/unauthorized-domain') {
         alert(
-          `Domain Unauthorized: The current domain (${window.location.hostname}) is not whitelisted in your Firebase Console.\n\n` +
-          `To fix this:\n` +
-          `1. Go to Firebase Console > Authentication > Settings > Authorized domains\n` +
-          `2. Add "${window.location.hostname}" to the list.\n` +
-          `3. Wait a few minutes and try again.`
+          `Firebase Auth Error: Domain Unauthorized\n\n` +
+          `Your browser is visiting: ${window.location.hostname}\n\n` +
+          `This domain must be added to "Authorized domains" in your Firebase Project settings (Authentication > Settings > Authorized domains).\n\n` +
+          `If this is a Vercel deployment, make sure the vercel.app domain is also added.`
         );
       } else if (err.code === 'auth/popup-blocked') {
-        alert('Login Popup Blocked: Please allow popups for this site to sign in with Google.');
+        alert('Login Popup Blocked: Please click the lock icon in your address bar and allow popups for this site.');
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        // User closed it, ignore
       } else {
-        alert(`Login failed: ${err.message || 'Unknown error'}. Please check your connection and configuration.`);
+        alert(`Authentication Error: ${err.message}\n\nCheck your console for full details.`);
       }
     }
   };

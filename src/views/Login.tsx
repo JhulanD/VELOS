@@ -47,9 +47,31 @@ export function Login() {
           START RECRUITING WITH GOOGLE
         </button>
         
-        <p className="mt-6 text-[10px] font-bold text-muted uppercase tracking-[0.2em] flex items-center justify-center gap-2">
-           <Shield className="w-3 h-3" /> Secure Enterprise Access
-        </p>
+        <div className="mt-8 flex flex-col gap-4">
+          <p className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] flex items-center justify-center gap-2">
+            <Shield className="w-3 h-3" /> Secure Enterprise Access
+          </p>
+          
+          <button 
+            onClick={() => {
+              const info = `
+Current Domain: ${window.location.hostname}
+Firebase Auth Domain: ${auth.app.options.authDomain}
+Project ID: ${auth.app.options.projectId}
+
+If you see "auth/unauthorized-domain", you MUST add the Current Domain to your Firebase Authorized Domains list.
+              `;
+              console.log("Auth Diagnostics:", {
+                hostname: window.location.hostname,
+                config: auth.app.options
+              });
+              alert(info);
+            }}
+            className="text-[10px] text-muted underline hover:text-white transition-colors uppercase tracking-widest font-black"
+          >
+            Trouble signing in? (Diagnostics)
+          </button>
+        </div>
       </motion.div>
     </div>
   );
